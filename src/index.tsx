@@ -1,17 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import { RouteComponentProps } from "react-router-dom";
+import App from "./App";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+declare global {
+  interface Window {
+    rendermicrofront: any;
+    unmountmicrofront: any;
+  }
+}
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+//Funciones que se ejecutan desde el contenedor
+//El nombre del microfront debe coincidir con el nombre aquí asignado (En este caso, "microfront")
+
+// Renderizamos el microfront
+window.rendermicrofront = (
+  containerId: string,
+  history: RouteComponentProps["history"]
+) => {
+  ReactDOM.render(
+    <App history={history} />,
+    document.getElementById(containerId)
+  );
+};
+
+// unmount micro frontend function
+window.unmountmicrofront = (containerId: string) => {
+  ReactDOM.unmountComponentAtNode(document.getElementById(containerId)!);
+};
+
+// Montamos el componente en la raiz si en el documento no encontramos el id
+if (!document.getElementById("microfront-container")) {
+  ReactDOM.render(<App />, document.getElementById("root"));
+}
